@@ -1,6 +1,5 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy JAR app to Azure Web App - hotel-api-azure
 
 on:
@@ -12,23 +11,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Java version
         uses: actions/setup-java@v1
         with:
           java-version: '21'
 
+      # Añadimos las variables de entorno para el build
       - name: Build with Maven
+        env:
+          MYSQL_URL_AZURE: ${{ secrets.MYSQL_URL_AZURE }}
+          MYSQL_USERNAME_AZURE: ${{ secrets.MYSQL_USERNAME_AZURE }}
+          MYSQL_PASSWORD_AZURE: ${{ secrets.MYSQL_PASSWORD_AZURE }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: java-app
-          path: '${{ github.workspace }}'
+          path: '${{ github.workspace }}/target/*.jar'  # Modifiqué esta línea para que solo suba el JAR
 
   deploy:
     runs-on: ubuntu-latest
@@ -36,13 +40,14 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+    
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: java-app
 
+      # Añadimos las variables de entorno para el deployment
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -51,3 +56,8 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_70E3369354F94868BEB42638457C371B }}
           package: '*.jar'
+        env:
+          MYSQL_URL_AZURE: ${{ secrets.MYSQL_URL_AZURE }}
+          MYSQL_USERNAME_AZURE: ${{ secrets.MYSQL_USERNAME_AZURE }}
+          MYSQL_PASSWORD_AZURE: ${{ secrets.MYSQL_PASSWORD_AZURE }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
