@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${MYSQL_URL_AZURE}
-    username: ${MYSQL_USERNAME_AZURE}
-    password: ${MYSQL_PASSWORD_AZURE}
+    url: jdbc:mysql://db-hotel-mysql.mysql.database.azure.com:3306/db_hotel
+    username: mysql_admin
+    password: Superadmin123
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
@@ -22,4 +22,4 @@ spring:
 auth:
   token:
     expirationinMils: 3600000
-    jwtSecret: ${JWT_SECRET}
+    jwtSecret: 12345678910QPWLEOAIMZNCHDJSKLQIWURHT102OAPZLFMAKQIWU12049586J23MAMZJ18234
