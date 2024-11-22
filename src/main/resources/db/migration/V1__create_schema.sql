@@ -1,10 +1,21 @@
--- Creación de tipos ENUM
+-- Desactivar foreign key checks temporalmente
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- Eliminar tablas si existen para evitar conflictos
+DROP TABLE IF EXISTS reservas;
+DROP TABLE IF EXISTS habitaciones;
+DROP TABLE IF EXISTS sedes;
+DROP TABLE IF EXISTS tipos_camas;
+DROP TABLE IF EXISTS tipos_habitaciones;
+DROP TABLE IF EXISTS usuarios;
+
+-- Creación de tipos ENUM y tablas
 CREATE TABLE usuarios (
                           id_usuario INT AUTO_INCREMENT PRIMARY KEY,
                           nombre VARCHAR(100) NOT NULL,
                           apellido VARCHAR(100) NOT NULL,
                           telefono VARCHAR(9) NOT NULL,
-                          email VARCHAR(100) UNIQUE NOT NULL,
+                          email VARCHAR(100) NOT NULL,
                           contrasena VARCHAR(100) NOT NULL,
                           fecha_nacimiento DATE NOT NULL,
                           dni VARCHAR(8) NOT NULL,
@@ -15,7 +26,8 @@ CREATE TABLE usuarios (
                           estado ENUM('ACTIVO', 'INACTIVO') NOT NULL DEFAULT 'ACTIVO',
                           imagen_url VARCHAR(255),
                           fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                          email_verificado BOOLEAN DEFAULT FALSE NOT NULL
+                          email_verificado BOOLEAN DEFAULT FALSE NOT NULL,
+                          CONSTRAINT uk_email UNIQUE (email)
 );
 
 CREATE TABLE tipos_habitaciones (
@@ -48,8 +60,8 @@ CREATE TABLE habitaciones (
                               imagen_url VARCHAR(255) NOT NULL,
                               id_tipo_cama INT NOT NULL,
                               id_tipo_habitacion INT NOT NULL,
-                              FOREIGN KEY (id_tipo_cama) REFERENCES tipos_camas(id_tipo_cama) ON DELETE CASCADE,
-                              FOREIGN KEY (id_tipo_habitacion) REFERENCES tipos_habitaciones(id_tipo_habitacion) ON DELETE CASCADE
+                              CONSTRAINT fk_habitacion_tipo_cama FOREIGN KEY (id_tipo_cama) REFERENCES tipos_camas(id_tipo_cama) ON DELETE CASCADE,
+                              CONSTRAINT fk_habitacion_tipo_habitacion FOREIGN KEY (id_tipo_habitacion) REFERENCES tipos_habitaciones(id_tipo_habitacion) ON DELETE CASCADE
 );
 
 CREATE TABLE reservas (
@@ -59,11 +71,15 @@ CREATE TABLE reservas (
                           cantidad_huespedes INT NOT NULL,
                           precio_total DECIMAL(10, 2) NOT NULL,
                           estado ENUM('PENDIENTE', 'CONFIRMADA', 'RESERVADA', 'CANCELADA', 'COMPLETA') NOT NULL DEFAULT 'PENDIENTE',
-                          codigo_reserva VARCHAR(255) UNIQUE NOT NULL,
+                          codigo_reserva VARCHAR(255) NOT NULL,
                           id_usuario INT NOT NULL,
                           id_habitacion INT NOT NULL,
                           id_sede INT NOT NULL,
-                          FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-                          FOREIGN KEY (id_habitacion) REFERENCES habitaciones(id_habitacion) ON DELETE CASCADE,
-                          FOREIGN KEY (id_sede) REFERENCES sedes(id_sede) ON DELETE CASCADE
+                          CONSTRAINT uk_codigo_reserva UNIQUE (codigo_reserva),
+                          CONSTRAINT fk_reserva_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+                          CONSTRAINT fk_reserva_habitacion FOREIGN KEY (id_habitacion) REFERENCES habitaciones(id_habitacion) ON DELETE CASCADE,
+                          CONSTRAINT fk_reserva_sede FOREIGN KEY (id_sede) REFERENCES sedes(id_sede) ON DELETE CASCADE
 );
+
+-- Reactivar foreign key checks
+SET FOREIGN_KEY_CHECKS = 1;

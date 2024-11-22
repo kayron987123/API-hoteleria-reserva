@@ -7,6 +7,7 @@ spring:
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -14,10 +15,24 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    clean-disabled: false
+    validate-on-migrate: true
+    locations: classpath:db/migration
+    baseline-version: 0
+    out-of-order: true
+    url: jdbc:mysql://db-hotel-mysql.mysql.database.azure.com:3306/db_hotel
+    user: mysql_admin
+    password: Superadmin123
+
   logging:
     level:
       org.hibernate.SQL: DEBUG
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+      org.flywaydb: DEBUG
 
 auth:
   token:
