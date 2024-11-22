@@ -22,7 +22,7 @@ jobs:
           java-version: '21'
 
       - name: Build with Maven
-        run: mvn clean install -f Backend-Hotel/pom.xml
+        run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
