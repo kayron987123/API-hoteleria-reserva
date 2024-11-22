@@ -5,22 +5,33 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import pe.com.hotel_api.hotel.persistence.entity.Usuario;
 import pe.com.hotel_api.hotel.persistence.enums.EstadoUsuario;
 import pe.com.hotel_api.hotel.persistence.enums.RolUsuario;
 import pe.com.hotel_api.hotel.persistence.repository.UsuarioRepository;
 import pe.com.hotel_api.hotel.presentation.advice.AlreadyExistsException;
-import pe.com.hotel_api.hotel.presentation.dto.CrearUsuarioRequest;
+import pe.com.hotel_api.hotel.presentation.dto.CrearUsuarioImagenRequest;
 import pe.com.hotel_api.hotel.presentation.dto.UsuarioDto;
 import pe.com.hotel_api.hotel.service.interfaces.UsuarioService;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
+    private static final String RUTA_ARCHIVO_IMAGENES = "src/main/resources/static/images/";
     private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
+
+    private static final List<String> EXTENSIONES_VALIDAS_iMAGENES = Arrays.asList("jpg", "jpeg", "png");
 
     @Override
     public UsuarioDto obtenerUsuarioAutenticado() {
@@ -40,8 +51,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioDto crearUsuario(CrearUsuarioRequest crearUsuarioRequest) {
-        return Optional.of(crearUsuarioRequest)
+    public UsuarioDto crearUsuarioImagen(CrearUsuarioImagenRequest crearUsuarioImagenRequest) {
+        return Optional.of(crearUsuarioImagenRequest)
                 .filter(user -> !usuarioRepository.existsByEmail(user.email()))
                 .map(req -> {
                     Usuario usuario = new Usuario();
@@ -58,6 +69,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                     usuario.setRol(RolUsuario.HUESPED);
                     usuario.setEstado(EstadoUsuario.ACTIVO);
                     usuario.setEmailVerificado(true);
+                    usuario.setImageUrl(req.imageUrl());
                     Usuario usuarioGuardado = usuarioRepository.save(usuario);
 
                     return new UsuarioDto(usuarioGuardado.getId(),
@@ -70,6 +82,21 @@ public class UsuarioServiceImpl implements UsuarioService {
                             usuarioGuardado.getProvincia(),
                             usuarioGuardado.getDistrito(),
                             usuarioGuardado.getImageUrl());
-                }).orElseThrow(() -> new AlreadyExistsException(crearUsuarioRequest.email() + "ya se encuentra registrado"));
+                }).orElseThrow(() -> new AlreadyExistsException(crearUsuarioImagenRequest.email() + "ya se encuentra registrado"));
+    }
+
+    @Override
+    public String procesarImagen(MultipartFile imagen) throws IOException {
+            String nombreImagen = imagen.getOriginalFilename();
+            Path path = Paths.get(RUTA_ARCHIVO_IMAGENES + nombreImagen);
+            Files.copy(imagen.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            return nombreImagen;
+
+    }
+
+    @Override
+    public boolean tipoArchivo(String nombreImagen) {
+        String extensionArchivo = nombreImagen.substring(nombreImagen.lastIndexOf(".")+1).toLowerCase();
+        return EXTENSIONES_VALIDAS_iMAGENES.contains(extensionArchivo);
     }
 }

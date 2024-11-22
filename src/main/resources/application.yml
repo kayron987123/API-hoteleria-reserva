@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${MYSQL_URL}
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
+    url: ${MYSQL_URL_AZURE}
+    username: ${MYSQL_USERNAME_AZURE}
+    password: ${MYSQL_PASSWORD_AZURE}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
@@ -16,8 +16,8 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
   logging:
     level:
-      org.hibernate.SQL: DEBUG  # Para ver las consultas SQL en el log
-      org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # Para ver los parámetros de las consultas
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 auth:
   token:

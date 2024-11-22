@@ -22,7 +22,7 @@ import pe.com.hotel_api.hotel.service.impl.UsuarioDetailsService;
 @RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
-public class AppConfig {
+public class AppConfiguration {
     private final UsuarioDetailsService usuarioDetailsService;
     private final JwtAuthEntryPoint authEntryPoint;
 

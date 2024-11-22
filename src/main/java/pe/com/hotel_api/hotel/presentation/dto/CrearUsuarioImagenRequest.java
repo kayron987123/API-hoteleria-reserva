@@ -1,9 +1,8 @@
 package pe.com.hotel_api.hotel.presentation.dto;
 
-
 import java.time.LocalDate;
 
-public record CrearUsuarioRequest(
+public record CrearUsuarioImagenRequest(
         String nombre,
         String apellido,
         String telefono,
@@ -13,6 +12,7 @@ public record CrearUsuarioRequest(
         String dni,
         String departamento,
         String provincia,
-        String distrito
+        String distrito,
+        String imageUrl
 ) {
 }
