@@ -14,20 +14,21 @@ CREATE TABLE usuarios (
                           id_usuario INT AUTO_INCREMENT PRIMARY KEY,
                           nombre VARCHAR(100) NOT NULL,
                           apellido VARCHAR(100) NOT NULL,
-                          telefono VARCHAR(9) NOT NULL,
+                          telefono VARCHAR(9),
                           email VARCHAR(100) NOT NULL,
                           contrasena VARCHAR(100) NOT NULL,
-                          fecha_nacimiento DATE NOT NULL,
+                          fecha_nacimiento DATE,
                           dni VARCHAR(8) NOT NULL,
-                          departamento VARCHAR(100) NOT NULL,
-                          provincia VARCHAR(100) NOT NULL,
-                          distrito VARCHAR(100) NOT NULL,
+                          departamento VARCHAR(100),
+                          provincia VARCHAR(100),
+                          distrito VARCHAR(100),
                           rol ENUM('HUESPED', 'ADMIN') NOT NULL DEFAULT 'HUESPED',
                           estado ENUM('ACTIVO', 'INACTIVO') NOT NULL DEFAULT 'ACTIVO',
                           imagen_url VARCHAR(255),
                           fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                           email_verificado BOOLEAN DEFAULT FALSE NOT NULL,
-                          CONSTRAINT uk_email UNIQUE (email)
+                          CONSTRAINT uk_email UNIQUE (email),
+                          CONSTRAINT uk_dni UNIQUE (dni)
 );
 
 CREATE TABLE tipos_habitaciones (

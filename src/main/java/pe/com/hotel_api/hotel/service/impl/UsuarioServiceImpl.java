@@ -11,7 +11,7 @@ import pe.com.hotel_api.hotel.persistence.enums.EstadoUsuario;
 import pe.com.hotel_api.hotel.persistence.enums.RolUsuario;
 import pe.com.hotel_api.hotel.persistence.repository.UsuarioRepository;
 import pe.com.hotel_api.hotel.presentation.advice.AlreadyExistsException;
-import pe.com.hotel_api.hotel.presentation.dto.CrearUsuarioImagenRequest;
+import pe.com.hotel_api.hotel.presentation.dto.CrearUsuarioRequest;
 import pe.com.hotel_api.hotel.presentation.dto.UsuarioDto;
 import pe.com.hotel_api.hotel.service.interfaces.UsuarioService;
 
@@ -51,21 +51,16 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioDto crearUsuarioImagen(CrearUsuarioImagenRequest crearUsuarioImagenRequest) {
-        return Optional.of(crearUsuarioImagenRequest)
+    public UsuarioDto crearUsuario(CrearUsuarioRequest crearUsuarioRequest) {
+        return Optional.of(crearUsuarioRequest)
                 .filter(user -> !usuarioRepository.existsByEmail(user.email()))
                 .map(req -> {
                     Usuario usuario = new Usuario();
                     usuario.setNombre(req.nombre());
                     usuario.setApellido(req.apellido());
-                    usuario.setTelefono(req.telefono());
                     usuario.setEmail(req.email());
                     usuario.setContrasena(passwordEncoder.encode(req.contrasena()));
-                    usuario.setFechaNacimiento(req.fechaNacimiento());
                     usuario.setDni(req.dni());
-                    usuario.setDepartamento(req.departamento());
-                    usuario.setProvincia(req.provincia());
-                    usuario.setDistrito(req.distrito());
                     usuario.setRol(RolUsuario.HUESPED);
                     usuario.setEstado(EstadoUsuario.ACTIVO);
                     usuario.setEmailVerificado(true);
@@ -82,21 +77,6 @@ public class UsuarioServiceImpl implements UsuarioService {
                             usuarioGuardado.getProvincia(),
                             usuarioGuardado.getDistrito(),
                             usuarioGuardado.getImageUrl());
-                }).orElseThrow(() -> new AlreadyExistsException(crearUsuarioImagenRequest.email() + "ya se encuentra registrado"));
-    }
-
-    @Override
-    public String procesarImagen(MultipartFile imagen) throws IOException {
-            String nombreImagen = imagen.getOriginalFilename();
-            Path path = Paths.get(RUTA_ARCHIVO_IMAGENES + nombreImagen);
-            Files.copy(imagen.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            return nombreImagen;
-
-    }
-
-    @Override
-    public boolean tipoArchivo(String nombreImagen) {
-        String extensionArchivo = nombreImagen.substring(nombreImagen.lastIndexOf(".")+1).toLowerCase();
-        return EXTENSIONES_VALIDAS_iMAGENES.contains(extensionArchivo);
+                }).orElseThrow(() -> new AlreadyExistsException(crearUsuarioRequest.email() + "ya se encuentra registrado"));
     }
 }
