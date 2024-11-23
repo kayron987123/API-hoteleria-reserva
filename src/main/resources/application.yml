@@ -12,7 +12,6 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
-
   jpa:
     hibernate:
       ddl-auto: none
@@ -20,7 +19,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -32,23 +30,22 @@ spring:
     url: jdbc:mysql://db-hotel-mysql.mysql.database.azure.com:3306/db_hotel
     user: mysql_admin
     password: Superadmin123
-
   logging:
     level:
       org.hibernate.SQL: DEBUG
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE
       org.flywaydb: DEBUG
-
 auth:
   token:
     expirationinMils: 3600000
     jwtSecret: 12345678910QPWLEOAIMZNCHDJSKLQIWURHT102OAPZLFMAKQIWU12049586J23MAMZJ18234
-
-
-
 azure:
   storage:
     connection:
       string: DefaultEndpointsProtocol=https;AccountName=imageneshoteleria;AccountKey=5oseUg+aILzsVpCBfkgaZ7Lq70M+/DHBYKpNOil8nbyU/vmDajSyBM4lY3BkRXy5QBpBLs987aHd+AStbjeYkA==;EndpointSuffix=core.windows.net
     container:
       name: imagenes-usuarios
+app:
+  mail:
+    password: hjof gtyt omli eekx
+    user: josuealva920@gmail.com

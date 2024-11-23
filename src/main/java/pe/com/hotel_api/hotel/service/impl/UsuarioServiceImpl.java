@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 import pe.com.hotel_api.hotel.persistence.entity.Usuario;
 import pe.com.hotel_api.hotel.persistence.enums.EstadoUsuario;
 import pe.com.hotel_api.hotel.persistence.enums.RolUsuario;
@@ -14,9 +14,6 @@ import pe.com.hotel_api.hotel.presentation.advice.AlreadyExistsException;
 import pe.com.hotel_api.hotel.presentation.dto.CrearUsuarioRequest;
 import pe.com.hotel_api.hotel.presentation.dto.UsuarioDto;
 import pe.com.hotel_api.hotel.service.interfaces.UsuarioService;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,6 +39,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 usuarioEncontrado.getImageUrl());
     }
 
+    @Transactional
     @Override
     public UsuarioDto crearUsuario(CrearUsuarioRequest crearUsuarioRequest) {
         return Optional.of(crearUsuarioRequest)

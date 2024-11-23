@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mensaje de confirmación de registro de cuenta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e8f5e9; /* Color de fondo suave (verde claro) */
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 40px auto;
+            text-align: center;
+        }
+        h1 {
+            color: #4CAF50; /* Verde para el título */
+        }
+        h2 {
+            color: #4CAF50; /* Verde para el token */
+            font-size: 60px;
+        }
+        p {
+            color: #666;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Confirmación de tu cuenta</h1>
+    <p style="text-align: center">TOKEN DE CONFIRMACIÓN</p>
+    <h2 th:text="${token}"></h2>
+    <p>Gracias por registrarte. Para completar tu registro, por favor ingresa este código de confirmación.</p>
+    <p class="footer">Si no solicitaste este correo, simplemente ignóralo o comunícate con la operadora.</p>
+</div>
+</body>
+</html>
