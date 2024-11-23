@@ -15,11 +15,6 @@ import pe.com.hotel_api.hotel.presentation.dto.CrearUsuarioRequest;
 import pe.com.hotel_api.hotel.presentation.dto.UsuarioDto;
 import pe.com.hotel_api.hotel.service.interfaces.UsuarioService;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -27,11 +22,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
-    private static final String RUTA_ARCHIVO_IMAGENES = "src/main/resources/static/images/";
     private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
-
-    private static final List<String> EXTENSIONES_VALIDAS_iMAGENES = Arrays.asList("jpg", "jpeg", "png");
 
     @Override
     public UsuarioDto obtenerUsuarioAutenticado() {
