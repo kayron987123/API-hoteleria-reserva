@@ -11,7 +11,7 @@ import pe.com.hotel_api.hotel.persistence.enums.EstadoUsuario;
 import pe.com.hotel_api.hotel.persistence.enums.RolUsuario;
 import pe.com.hotel_api.hotel.persistence.repository.UsuarioRepository;
 import pe.com.hotel_api.hotel.presentation.advice.AlreadyExistsException;
-import pe.com.hotel_api.hotel.presentation.dto.CrearUsuarioRequest;
+import pe.com.hotel_api.hotel.presentation.dto.UsuarioApiDniResponse;
 import pe.com.hotel_api.hotel.presentation.dto.UsuarioDto;
 import pe.com.hotel_api.hotel.service.interfaces.UsuarioService;
 import java.util.Optional;
@@ -30,43 +30,57 @@ public class UsuarioServiceImpl implements UsuarioService {
         return new UsuarioDto(usuarioEncontrado.getId(),
                 usuarioEncontrado.getNombre(),
                 usuarioEncontrado.getApellido(),
-                usuarioEncontrado.getTelefono(),
-                usuarioEncontrado.getEmail(),
-                usuarioEncontrado.getFechaNacimiento(),
-                usuarioEncontrado.getDepartamento(),
-                usuarioEncontrado.getProvincia(),
-                usuarioEncontrado.getDistrito(),
-                usuarioEncontrado.getImageUrl());
+                usuarioEncontrado.getEmail());
     }
 
     @Transactional
     @Override
-    public UsuarioDto crearUsuario(CrearUsuarioRequest crearUsuarioRequest) {
-        return Optional.of(crearUsuarioRequest)
+    public UsuarioDto crearUsuario(UsuarioApiDniResponse usuarioApiDniResponse) {
+        return Optional.of(usuarioApiDniResponse)
                 .filter(user -> !usuarioRepository.existsByEmail(user.email()))
                 .map(req -> {
                     Usuario usuario = new Usuario();
-                    usuario.setNombre(req.nombre());
-                    usuario.setApellido(req.apellido());
+                    usuario.setNombre(capitalizarStringsCompleto(req.nombre()));
+                    usuario.setApellido(capitalizarStringsCompleto(req.apellido()));
+                    usuario.setTelefono(req.telefono());
                     usuario.setEmail(req.email());
                     usuario.setContrasena(passwordEncoder.encode(req.contrasena()));
+                    usuario.setFechaNacimiento(req.fechaNacimiento());
                     usuario.setDni(req.dni());
+                    usuario.setDepartamento(capitalizarStringsCompleto(req.departamento()));
+                    usuario.setProvincia(capitalizarStringsCompleto(req.provincia()));
+                    usuario.setDistrito(capitalizarStringsCompleto(req.distrito()));
                     usuario.setRol(RolUsuario.HUESPED);
                     usuario.setEstado(EstadoUsuario.ACTIVO);
-                    usuario.setEmailVerificado(true);
+                    usuario.setEmailVerificado(false);
                     usuario.setImageUrl(req.imageUrl());
                     Usuario usuarioGuardado = usuarioRepository.save(usuario);
 
                     return new UsuarioDto(usuarioGuardado.getId(),
                             usuarioGuardado.getNombre(),
                             usuarioGuardado.getApellido(),
-                            usuarioGuardado.getTelefono(),
-                            usuarioGuardado.getEmail(),
-                            usuarioGuardado.getFechaNacimiento(),
-                            usuarioGuardado.getDepartamento(),
-                            usuarioGuardado.getProvincia(),
-                            usuarioGuardado.getDistrito(),
-                            usuarioGuardado.getImageUrl());
-                }).orElseThrow(() -> new AlreadyExistsException(crearUsuarioRequest.email() + "ya se encuentra registrado"));
+                            usuarioGuardado.getEmail());
+                }).orElseThrow(() -> new AlreadyExistsException(usuarioApiDniResponse.email() + "ya se encuentra registrado"));
+    }
+
+    private String capitalizarStringsCompleto(String texto) {
+        if (texto == null || texto.isEmpty()) {
+            return texto;
+        }
+
+        // Dividir el texto en partes por los espacios
+        String[] palabras = texto.split(" ");
+
+        // Capitalizar cada palabra y luego unirlas
+        StringBuilder resultado = new StringBuilder();
+        for (String palabra : palabras) {
+            if (!palabra.isEmpty()) {
+                // Capitaliza la primera letra y pone el resto en minúsculas
+                resultado.append(palabra.substring(0, 1).toUpperCase())
+                        .append(palabra.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+        return resultado.toString().trim();
     }
 }
