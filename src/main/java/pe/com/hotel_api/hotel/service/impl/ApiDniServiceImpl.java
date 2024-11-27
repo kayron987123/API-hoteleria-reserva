@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pe.com.hotel_api.hotel.service.interfaces.ApiDniService;
 
@@ -14,11 +15,11 @@ import pe.com.hotel_api.hotel.service.interfaces.ApiDniService;
 public class ApiDniServiceImpl implements ApiDniService {
 
     private static final String URL_REQUEST = "https://api.consultasperu.com/api/v1/query";
-    private static final String TOKEN_REQUEST_DNI = "7a37c6d81c6a67b8c65ac0ee9b1df7440cfb1f614260fc7060e3abe01b17704d";
+    private static final String TOKEN_REQUEST_DNI = "49810a5bc8d331082461d84fa8aeea9d91e596700add0297730787a4a79614f6";
     private static final String TYPE_DOCUMENT = "dni";
 
     @Override
-    public String enviarPeticionApiDni(String dni) {
+    public String enviarPeticionApiDni(String dni) throws HttpClientErrorException {
         // Crear los datos en formato MultiValueMap
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("token", TOKEN_REQUEST_DNI);

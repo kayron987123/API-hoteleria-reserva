@@ -22,8 +22,9 @@ public class EmailServiceImpl implements EmailService {
     private final TemplateEngine mailTemplateEngine;
 
     @Override
-    public void sendEmail(String toUser) throws MessagingException {
+    public void sendEmailForVerifiUser(String toUser, String token) throws MessagingException {
         Context context = new Context();
+        context.setVariable("token", token);
 
         String mailContent = mailTemplateEngine.process("email-template", context);
         MimeMessage message = javaMailSender.createMimeMessage();

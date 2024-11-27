@@ -63,6 +63,14 @@ public class UsuarioServiceImpl implements UsuarioService {
                 }).orElseThrow(() -> new AlreadyExistsException(usuarioApiDniResponse.email() + "ya se encuentra registrado"));
     }
 
+    @Transactional
+    @Override
+    public void correoVerificado(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        usuario.setEmailVerificado(true);
+        usuarioRepository.save(usuario);
+    }
+
     private String capitalizarStringsCompleto(String texto) {
         if (texto == null || texto.isEmpty()) {
             return texto;

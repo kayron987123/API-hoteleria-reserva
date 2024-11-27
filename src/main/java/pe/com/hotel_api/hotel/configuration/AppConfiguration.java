@@ -57,6 +57,7 @@ public class AppConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/usuarios/crear").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/validar-otp").permitAll()
                         .anyRequest().authenticated()
                 );
         http.authenticationProvider(daoAuthenticationProvider());
