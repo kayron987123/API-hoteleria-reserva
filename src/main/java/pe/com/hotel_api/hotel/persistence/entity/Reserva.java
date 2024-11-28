@@ -39,6 +39,9 @@ public class Reserva {
     @Column(name = "codigo_reserva")
     private String codigoReserva;
 
+    @Column(name = "codigo_qr_url")
+    private String codigoQrUrl;
+
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;

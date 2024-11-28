@@ -73,6 +73,7 @@ CREATE TABLE reservas (
                           precio_total DECIMAL(10, 2) NOT NULL,
                           estado ENUM('PENDIENTE', 'CONFIRMADA', 'RESERVADA', 'CANCELADA', 'COMPLETA') NOT NULL DEFAULT 'PENDIENTE',
                           codigo_reserva VARCHAR(255) NOT NULL,
+                          codigo_qr_url VARCHAR(255) NOT NULL,
                           id_usuario INT NOT NULL,
                           id_habitacion INT NOT NULL,
                           id_sede INT NOT NULL,

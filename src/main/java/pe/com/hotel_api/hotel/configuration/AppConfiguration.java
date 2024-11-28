@@ -17,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pe.com.hotel_api.hotel.configuration.security.AuthTokenFilter;
 import pe.com.hotel_api.hotel.configuration.security.JwtAuthEntryPoint;
+import pe.com.hotel_api.hotel.persistence.enums.RolUsuario;
 import pe.com.hotel_api.hotel.service.impl.UsuarioDetailsService;
 
 @RequiredArgsConstructor
@@ -58,6 +59,7 @@ public class AppConfiguration {
                         .requestMatchers(HttpMethod.POST, "/usuarios/crear").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios/validar-otp").permitAll()
+                        .requestMatchers(HttpMethod.POST, "reservas/crear").hasRole(RolUsuario.HUESPED.name())
                         .anyRequest().authenticated()
                 );
         http.authenticationProvider(daoAuthenticationProvider());

@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,9 @@ import pe.com.hotel_api.hotel.service.impl.UsuarioDetailsService;
 import java.io.IOException;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
+    @Autowired
     private JwtUtils jwtUtils;
+    @Autowired
     private UsuarioDetailsService usuarioDetailsService;
 
     @Override
@@ -34,9 +37,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         } catch (JwtException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write(e.getMessage() + " : Token invalido o expirado, inicie sesión nuevamente");
+            return;
         }catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write(e.getMessage());
+            return;
         }
         filterChain.doFilter(request, response);
     }

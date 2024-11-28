@@ -35,6 +35,15 @@ spring:
       org.hibernate.SQL: DEBUG
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE
       org.flywaydb: DEBUG
+  data:
+    redis:
+      repositories:
+        enabled: true
+      port: 6380
+      host: hoteleria.redis.cache.windows.net
+      password: zFm7EyY15wzDAAnKJSNAanrtiqwl9SsbQAzCaO0nfxk=
+      ssl:
+        enabled: true
 auth:
   token:
     expirationinMils: 3600000

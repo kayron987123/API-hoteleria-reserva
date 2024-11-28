@@ -74,7 +74,7 @@ public class UsuarioController {
             }
             String key = redisService.guardarUsuarioTemporal(nuevoUsarioTemporal);
             emailService.sendEmailForVerifiUser(crearUsuarioRequest.email(), key);
-            return ResponseEntity.ok(new ApiResponse("Usuario guarda temporalmente", new UsuarioRedisDto(key, nuevoUsarioTemporal.nombre(), nuevoUsarioTemporal.apellido(), nuevoUsarioTemporal.email())));
+            return ResponseEntity.ok(new ApiResponse("Usuario guardado temporalmente", new UsuarioRedisDto(key, nuevoUsarioTemporal.nombre(), nuevoUsarioTemporal.apellido(), nuevoUsarioTemporal.email())));
         }catch (IOException e) {
             return ResponseEntity.badRequest().body(new ApiResponse("Error al recuperar nombre de la imagen: " + e.getMessage(), null));
         }catch (MessagingException e){
