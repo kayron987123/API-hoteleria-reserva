@@ -20,20 +20,16 @@ public class ApiDniServiceImpl implements ApiDniService {
 
     @Override
     public String enviarPeticionApiDni(String dni) throws HttpClientErrorException {
-        // Crear los datos en formato MultiValueMap
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("token", TOKEN_REQUEST_DNI);
         body.add("type_document", TYPE_DOCUMENT);
         body.add("document_number", dni);
 
-        // Configurar los encabezados
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        // Crear la entidad HTTP
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
-        // Enviar la solicitud POST con RestTemplate
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<String> response = restTemplate.postForEntity(URL_REQUEST, request, String.class);

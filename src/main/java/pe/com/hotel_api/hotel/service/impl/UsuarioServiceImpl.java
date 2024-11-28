@@ -76,14 +76,11 @@ public class UsuarioServiceImpl implements UsuarioService {
             return texto;
         }
 
-        // Dividir el texto en partes por los espacios
         String[] palabras = texto.split(" ");
 
-        // Capitalizar cada palabra y luego unirlas
         StringBuilder resultado = new StringBuilder();
         for (String palabra : palabras) {
             if (!palabra.isEmpty()) {
-                // Capitaliza la primera letra y pone el resto en minúsculas
                 resultado.append(palabra.substring(0, 1).toUpperCase())
                         .append(palabra.substring(1).toLowerCase())
                         .append(" ");

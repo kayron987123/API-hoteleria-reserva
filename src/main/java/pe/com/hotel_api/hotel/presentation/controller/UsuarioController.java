@@ -1,11 +1,13 @@
 package pe.com.hotel_api.hotel.presentation.controller;
 
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pe.com.hotel_api.hotel.presentation.advice.AlreadyExistsException;
 import pe.com.hotel_api.hotel.presentation.dto.*;
 import pe.com.hotel_api.hotel.service.interfaces.*;
 
@@ -26,7 +28,7 @@ public class UsuarioController {
     private static final String URL_IMAGE_DEFAULT = "https://imageneshoteleria.blob.core.windows.net/imagenes-usuarios/default.png";
 
     @PostMapping("/crear")
-    public ResponseEntity<ApiResponse> crearUsuario(@RequestPart(value = "usuario") CrearUsuarioRequest crearUsuarioRequest,
+    public ResponseEntity<ApiResponse> crearUsuario(@RequestPart(value = "usuario") @Valid CrearUsuarioRequest crearUsuarioRequest,
                                                     @RequestPart(value = "imagen", required = false) MultipartFile imagen){
         UsuarioApiDniResponse nuevoUsarioTemporal;
 
@@ -75,17 +77,19 @@ public class UsuarioController {
             String key = redisService.guardarUsuarioTemporal(nuevoUsarioTemporal);
             emailService.sendEmailForVerifiUser(crearUsuarioRequest.email(), key);
             return ResponseEntity.ok(new ApiResponse("Usuario guardado temporalmente", new UsuarioRedisDto(key, nuevoUsarioTemporal.nombre(), nuevoUsarioTemporal.apellido(), nuevoUsarioTemporal.email())));
+        }catch (AlreadyExistsException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
         }catch (IOException e) {
             return ResponseEntity.badRequest().body(new ApiResponse("Error al recuperar nombre de la imagen: " + e.getMessage(), null));
         }catch (MessagingException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Error al enviar el correo: " + e.getMessage(), null));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse("Archivo invalido o vacio" + e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
         }
     }
 
     @PostMapping("/validar-otp")
-    public ResponseEntity<ApiResponse> validarOtp(@RequestBody ValidarOtpRequest validarOtpRequest){
+    public ResponseEntity<ApiResponse> validarOtp(@RequestBody @Valid ValidarOtpRequest validarOtpRequest){
         if (!otpService.esValidoOtp(validarOtpRequest.otp())){
             return ResponseEntity.badRequest().body(new ApiResponse("Otp invalido", null));
         }
@@ -93,6 +97,6 @@ public class UsuarioController {
         var usuarioResponse = usuarioService.crearUsuario(usuarioGuardado);
         usuarioService.correoVerificado(usuarioGuardado.email());
         redisService.deleteUsuarioTemporal(validarOtpRequest.otp());
-        return ResponseEntity.ok(new ApiResponse("Otp validado y usuario creado correctamente", usuarioResponse));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("Otp validado y usuario creado correctamente", usuarioResponse));
     }
 }

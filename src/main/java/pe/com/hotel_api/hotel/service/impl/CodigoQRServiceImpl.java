@@ -56,6 +56,8 @@ public class CodigoQRServiceImpl implements CodigoQRService {
 
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(pngData)) {
             blobClient.upload(inputStream, pngData.length, true);
+        }catch (IOException e){
+            throw new IOException("Error al subir el archivo al storage");
         }
 
         return blobClient.getBlobUrl();

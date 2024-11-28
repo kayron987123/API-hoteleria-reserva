@@ -1,5 +1,6 @@
 package pe.com.hotel_api.hotel.presentation.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class AuthController {
     private final JwtUtils jwtUtils;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> logueo(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<ApiResponse> logueo(@RequestBody @Valid LoginRequest loginRequest){
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.contrasena()));
