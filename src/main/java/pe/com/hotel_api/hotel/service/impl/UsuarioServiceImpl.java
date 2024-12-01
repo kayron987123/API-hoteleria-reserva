@@ -14,6 +14,7 @@ import pe.com.hotel_api.hotel.presentation.advice.AlreadyExistsException;
 import pe.com.hotel_api.hotel.presentation.dto.UsuarioApiDniResponse;
 import pe.com.hotel_api.hotel.presentation.dto.UsuarioDto;
 import pe.com.hotel_api.hotel.service.interfaces.UsuarioService;
+
 import java.util.Optional;
 
 @Service
@@ -36,31 +37,28 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     @Override
     public UsuarioDto crearUsuario(UsuarioApiDniResponse usuarioApiDniResponse) {
-        return Optional.of(usuarioApiDniResponse)
-                .filter(user -> !usuarioRepository.existsByEmail(user.email()))
-                .map(req -> {
-                    Usuario usuario = new Usuario();
-                    usuario.setNombre(capitalizarStringsCompleto(req.nombre()));
-                    usuario.setApellido(capitalizarStringsCompleto(req.apellido()));
-                    usuario.setTelefono(req.telefono());
-                    usuario.setEmail(req.email());
-                    usuario.setContrasena(passwordEncoder.encode(req.contrasena()));
-                    usuario.setFechaNacimiento(req.fechaNacimiento());
-                    usuario.setDni(req.dni());
-                    usuario.setDepartamento(capitalizarStringsCompleto(req.departamento()));
-                    usuario.setProvincia(capitalizarStringsCompleto(req.provincia()));
-                    usuario.setDistrito(capitalizarStringsCompleto(req.distrito()));
-                    usuario.setRol(RolUsuario.HUESPED);
-                    usuario.setEstado(EstadoUsuario.ACTIVO);
-                    usuario.setEmailVerificado(false);
-                    usuario.setImageUrl(req.imageUrl());
-                    Usuario usuarioGuardado = usuarioRepository.save(usuario);
 
-                    return new UsuarioDto(usuarioGuardado.getId(),
-                            usuarioGuardado.getNombre(),
-                            usuarioGuardado.getApellido(),
-                            usuarioGuardado.getEmail());
-                }).orElseThrow(() -> new AlreadyExistsException(usuarioApiDniResponse.email() + "ya se encuentra registrado"));
+        Usuario usuario = new Usuario();
+        usuario.setNombre(capitalizarStringsCompleto(usuarioApiDniResponse.nombre()));
+        usuario.setApellido(capitalizarStringsCompleto(usuarioApiDniResponse.apellido()));
+        usuario.setTelefono(usuarioApiDniResponse.telefono());
+        usuario.setEmail(usuarioApiDniResponse.email());
+        usuario.setContrasena(passwordEncoder.encode(usuarioApiDniResponse.contrasena()));
+        usuario.setFechaNacimiento(usuarioApiDniResponse.fechaNacimiento());
+        usuario.setDni(usuarioApiDniResponse.dni());
+        usuario.setDepartamento(capitalizarStringsCompleto(usuarioApiDniResponse.departamento()));
+        usuario.setProvincia(capitalizarStringsCompleto(usuarioApiDniResponse.provincia()));
+        usuario.setDistrito(capitalizarStringsCompleto(usuarioApiDniResponse.distrito()));
+        usuario.setRol(RolUsuario.HUESPED);
+        usuario.setEstado(EstadoUsuario.ACTIVO);
+        usuario.setEmailVerificado(false);
+        usuario.setImageUrl(usuarioApiDniResponse.imageUrl());
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        return new UsuarioDto(usuarioGuardado.getId(),
+                usuarioGuardado.getNombre(),
+                usuarioGuardado.getApellido(),
+                usuarioGuardado.getEmail());
     }
 
     @Transactional
@@ -87,5 +85,21 @@ public class UsuarioServiceImpl implements UsuarioService {
             }
         }
         return resultado.toString().trim();
+    }
+
+    @Override
+    public boolean existeUsuarioByEmail(String email) {
+        if (usuarioRepository.existsByEmail(email)) {
+            throw new AlreadyExistsException("El email" + email + " ya se encuentra registrado");
+        }
+        return false;
+    }
+
+    @Override
+    public boolean existeUsuarioByDni(String dni) {
+        if (usuarioRepository.existsByDni(dni)) {
+            throw new AlreadyExistsException("El dni" + dni + " ya se encuentra registrado");
+        }
+        return false;
     }
 }

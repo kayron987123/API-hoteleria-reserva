@@ -7,4 +7,6 @@ public interface UsuarioService {
     UsuarioDto obtenerUsuarioAutenticado();
     UsuarioDto crearUsuario(UsuarioApiDniResponse UsuarioApiDniResponse);
     void correoVerificado(String email);
+    boolean existeUsuarioByEmail(String email);
+    boolean existeUsuarioByDni(String dni);
 }
