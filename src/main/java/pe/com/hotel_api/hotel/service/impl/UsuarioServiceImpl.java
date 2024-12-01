@@ -15,8 +15,6 @@ import pe.com.hotel_api.hotel.presentation.dto.UsuarioApiDniResponse;
 import pe.com.hotel_api.hotel.presentation.dto.UsuarioDto;
 import pe.com.hotel_api.hotel.service.interfaces.UsuarioService;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
