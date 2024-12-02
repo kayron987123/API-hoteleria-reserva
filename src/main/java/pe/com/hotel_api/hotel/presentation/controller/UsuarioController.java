@@ -28,8 +28,7 @@ public class UsuarioController {
     private static final String URL_IMAGE_DEFAULT = "https://imageneshoteleria.blob.core.windows.net/imagenes-usuarios/default.png";
 
     @PostMapping("/crear")
-    public ResponseEntity<ApiResponse> crearUsuario(@RequestPart(value = "usuario") @Valid CrearUsuarioRequest crearUsuarioRequest,
-                                                    @RequestPart(value = "imagen", required = false) MultipartFile imagen){
+    public ResponseEntity<ApiResponse> crearUsuario(@RequestBody @Valid CrearUsuarioRequest crearUsuarioRequest){
         UsuarioApiDniResponse nuevoUsarioTemporal;
         //consumir api dni
         var jsonReponse = apiDniService.enviarPeticionApiDni(crearUsuarioRequest.dni());
@@ -45,44 +44,26 @@ public class UsuarioController {
         try {
             usuarioService.existeUsuarioByEmail(crearUsuarioRequest.email());
             usuarioService.existeUsuarioByDni(crearUsuarioRequest.dni());
-            if (imagen != null && !imagen.isEmpty()) {
-                var imagenGuardada = azureBlobService.cargarImagen(imagen);
-                nuevoUsarioTemporal = new UsuarioApiDniResponse(
-                        dataDni.nombre(),
-                        dataDni.apellido(),
-                        crearUsuarioRequest.telefono(),
-                        crearUsuarioRequest.email(),
-                        crearUsuarioRequest.contrasena(),
-                        dataDni.fechaNacimiento(),
-                        crearUsuarioRequest.dni(),
-                        dataDni.departmento(),
-                        dataDni.provincia(),
-                        dataDni.distrito(),
-                        imagenGuardada
-                );
-            } else {
-                nuevoUsarioTemporal = new UsuarioApiDniResponse(
-                        dataDni.nombre(),
-                        dataDni.apellido(),
-                        crearUsuarioRequest.telefono(),
-                        crearUsuarioRequest.email(),
-                        crearUsuarioRequest.contrasena(),
-                        dataDni.fechaNacimiento(),
-                        crearUsuarioRequest.dni(),
-                        dataDni.departmento(),
-                        dataDni.provincia(),
-                        dataDni.distrito(),
-                        URL_IMAGE_DEFAULT
-                );
-            }
+
+            nuevoUsarioTemporal = new UsuarioApiDniResponse(
+                    dataDni.nombre(),
+                    dataDni.apellido(),
+                    crearUsuarioRequest.telefono(),
+                    crearUsuarioRequest.email(),
+                    crearUsuarioRequest.contrasena(),
+                    dataDni.fechaNacimiento(),
+                    crearUsuarioRequest.dni(),
+                    dataDni.departmento(),
+                    dataDni.provincia(),
+                    dataDni.distrito(),
+                    URL_IMAGE_DEFAULT);
+
             String key = redisService.guardarUsuarioTemporal(nuevoUsarioTemporal);
             emailService.sendEmailForVerifiUser(crearUsuarioRequest.email(), key);
             return ResponseEntity.ok(new ApiResponse("Usuario guardado temporalmente", new UsuarioRedisDto(key, nuevoUsarioTemporal.nombre(), nuevoUsarioTemporal.apellido(), nuevoUsarioTemporal.email())));
         }catch (AlreadyExistsException | IllegalArgumentException e){
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
-        }catch (IOException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse("Error al recuperar nombre de la imagen: " + e.getMessage(), null));
-        }catch (MessagingException e){
+        } catch (MessagingException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Error al enviar el correo: " + e.getMessage(), null));
         }
     }
