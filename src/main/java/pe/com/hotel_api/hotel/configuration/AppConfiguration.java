@@ -58,7 +58,7 @@ public class AppConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new CorsConfiguration();
-                    corsConfig.setAllowedOrigins(List.of("https://sistema-hotelero-proyect.vercel.app"));
+                    corsConfig.setAllowedOrigins(List.of("https://sistema-hotelero-proyect.vercel.app", "http://localhost:3000"));
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
                     corsConfig.setExposedHeaders(List.of("Authorization"));
