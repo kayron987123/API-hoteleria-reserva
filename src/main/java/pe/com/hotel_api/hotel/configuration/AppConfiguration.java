@@ -68,14 +68,14 @@ public class AppConfiguration {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/usuarios/crear").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios/validar-otp").permitAll()
                         .requestMatchers(HttpMethod.POST, "reservas/crear").hasRole(RolUsuario.HUESPED.name())
+                        .requestMatchers(HttpMethod.GET, "/habitaciones/**").permitAll()
                         .anyRequest().authenticated()
-                );
-        http.authenticationProvider(daoAuthenticationProvider());
-        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                )
+                .authenticationProvider(daoAuthenticationProvider())
+                .addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

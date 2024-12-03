@@ -6,12 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import pe.com.hotel_api.hotel.presentation.advice.AlreadyExistsException;
 import pe.com.hotel_api.hotel.presentation.dto.*;
 import pe.com.hotel_api.hotel.service.interfaces.*;
-
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController

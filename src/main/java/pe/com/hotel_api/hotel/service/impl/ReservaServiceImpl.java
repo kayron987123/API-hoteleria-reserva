@@ -7,7 +7,6 @@ import pe.com.hotel_api.hotel.persistence.entity.Reserva;
 import pe.com.hotel_api.hotel.persistence.enums.EstadoReserva;
 import pe.com.hotel_api.hotel.persistence.repository.HabitacionRepository;
 import pe.com.hotel_api.hotel.persistence.repository.ReservaRepository;
-import pe.com.hotel_api.hotel.persistence.repository.SedeRepository;
 import pe.com.hotel_api.hotel.persistence.repository.UsuarioRepository;
 import pe.com.hotel_api.hotel.presentation.advice.AlreadyExistsException;
 import pe.com.hotel_api.hotel.presentation.dto.CrearReservaRequest;
@@ -25,14 +24,13 @@ import java.time.LocalDateTime;
 public class ReservaServiceImpl implements ReservaService {
     private final ReservaRepository reservaRepository;
     private final UsuarioRepository usuarioRepository;
-    private final SedeRepository sedeRepository;
     private final HabitacionRepository habitacionRepository;
     private final CodigoQRService codigoQRService;
 
     @Override
     public String crearReserva(CrearReservaRequest crearReservaRequest, String email) throws IOException, WriterException {
 
-        if (existeReserva(crearReservaRequest.fechaEntrada(), crearReservaRequest.fechaSalida())) {
+        if (reservaRepository.existeReservaSolapada(crearReservaRequest.fechaEntrada(), crearReservaRequest.fechaSalida())) {
             throw new AlreadyExistsException("Ya existe una reserva en esas fechas");
         }
 
@@ -45,7 +43,6 @@ public class ReservaServiceImpl implements ReservaService {
         reserva.setEstado(EstadoReserva.RESERVADA);
         reserva.setUsuario(usuarioRepository.findByEmail(email));
         reserva.setHabitacion(habitacionRepository.getHabitacionById(crearReservaRequest.habitacion()));
-        reserva.setSede(sedeRepository.getSedeById(crearReservaRequest.sede()));
         reserva.setPrecioTotal(calcularPrecioTotal(crearReservaRequest.habitacion(), crearReservaRequest.fechaEntrada(), crearReservaRequest.fechaSalida()));
         reserva.setCodigoReserva(codigoReserva);
         String qrCode = codigoQRService.generarCodigoQR(codigoReserva, email, crearReservaRequest.fechaEntrada(), crearReservaRequest.fechaSalida());
@@ -53,6 +50,15 @@ public class ReservaServiceImpl implements ReservaService {
         reserva.setCodigoQrUrl(qrCode);
         reservaRepository.save(reserva);
         return qrCode;
+    }
+
+    @Override
+    public boolean verificarExcedeCantidadHuespedes(Integer cantidadHuespedes, Long idHabitacion){
+        var capacidadHabitacion = habitacionRepository.getCapacidadById(idHabitacion);
+        if (capacidadHabitacion < cantidadHuespedes){
+            return true;
+        }
+        return false;
     }
 
     private BigDecimal calcularPrecioTotal(Long id, LocalDateTime fechaEntrada, LocalDateTime fechaSalida) {
@@ -72,10 +78,6 @@ public class ReservaServiceImpl implements ReservaService {
         } while (reservaRepository.existsByCodigoReserva(codigoReserva));
 
         return codigoReserva;
-    }
-
-    private boolean existeReserva(LocalDateTime fechaEntrada, LocalDateTime fechaSalida){
-        return reservaRepository.existeReservaSolapada(fechaEntrada, fechaSalida);
     }
 
     private Long calcularNoches(LocalDateTime fechaEntrada, LocalDateTime fechaSalida){

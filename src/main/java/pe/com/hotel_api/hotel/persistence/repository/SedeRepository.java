@@ -5,4 +5,5 @@ import pe.com.hotel_api.hotel.persistence.entity.Sede;
 
 public interface SedeRepository extends JpaRepository<Sede, Long> {
     Sede getSedeById(Long id);
+    boolean existsById(Long idSede);
 }

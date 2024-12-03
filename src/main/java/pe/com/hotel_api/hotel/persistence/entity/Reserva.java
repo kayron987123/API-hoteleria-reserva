@@ -49,8 +49,4 @@ public class Reserva {
     @ManyToOne
     @JoinColumn(name = "id_habitacion")
     private Habitacion habitacion;
-
-    @ManyToOne
-    @JoinColumn(name = "id_sede")
-    private Sede sede;
 }

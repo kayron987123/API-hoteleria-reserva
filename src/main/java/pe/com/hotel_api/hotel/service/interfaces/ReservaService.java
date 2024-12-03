@@ -7,4 +7,5 @@ import java.io.IOException;
 
 public interface ReservaService {
     String crearReserva(CrearReservaRequest crearReservaRequest, String email) throws IOException, WriterException;
+    boolean verificarExcedeCantidadHuespedes(Integer cantidadHuespedes, Long idHabitacion);
 }

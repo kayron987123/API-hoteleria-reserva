@@ -19,11 +19,6 @@ public record CrearReservaRequest(
         @NotNull
         @Min(value = 1, message = "El id de la habitación debe ser mayor a 0")
         @Positive(message = "El id de la habitación debe ser mayor a 0")
-        Long habitacion,
-
-        @NotNull
-        @Min(value = 1, message = "El id del cliente debe ser mayor a 0")
-        @Positive(message = "El id del cliente debe ser mayor a 0")
-        Long sede
+        Long habitacion
 ) {
 }

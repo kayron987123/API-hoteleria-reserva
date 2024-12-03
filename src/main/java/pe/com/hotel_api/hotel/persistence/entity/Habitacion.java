@@ -42,4 +42,8 @@ public class Habitacion {
     @ManyToOne
     @JoinColumn(name = "id_tipo_habitacion")
     private TipoHabitacion tipoHabitacion;
+
+    @ManyToOne
+    @JoinColumn(name = "id_sede")
+    private Sede sede;
 }
