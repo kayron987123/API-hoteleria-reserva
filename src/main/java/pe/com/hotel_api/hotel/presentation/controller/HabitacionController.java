@@ -21,76 +21,6 @@ public class HabitacionController {
     private final HabitacionService habitacionService;
     private static final String MESSAGE_SUCCESS = "Habitaciones encontradas";
 
-    //check
-    @GetMapping("/listar-por-sede/{idSede}")
-    public ResponseEntity<ApiResponse> listarHabitacionesPorSede(@PathVariable Long idSede) {
-        try {
-            List<HabitacionDto> habitacionesResponse = habitacionService.listarHabitacionPorSede(idSede);
-            return ResponseEntity.ok(new ApiResponse(MESSAGE_SUCCESS, habitacionesResponse));
-        } catch (SedeNotFoundException | HabitacionNotFoundException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
-        }
-    }
-
-    //check
-    @GetMapping("/sede/{idSede}/buscar-disponibles-por-fechas")
-    public ResponseEntity<ApiResponse> buscarHabitacionesPorFecha(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaEntrada,
-                                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaSalida,
-                                                                  @PathVariable Long idSede) {
-        try {
-            List<HabitacionDto> habitacionesResponse = habitacionService.buscarHabitacionPorFecha(fechaEntrada, fechaSalida, idSede);
-            return ResponseEntity.ok(new ApiResponse(MESSAGE_SUCCESS, habitacionesResponse));
-        } catch (SedeNotFoundException | HabitacionNotFoundException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
-        }
-    }
-
-    @GetMapping("/sede/{idSede}/buscar-por-nombre")
-    public ResponseEntity<ApiResponse> buscarHabitacionPorNombre(@RequestParam String nombre,
-                                                                 @PathVariable Long idSede) {
-        try {
-            List<HabitacionDto> habitacionesResponse = habitacionService.buscarHabitacionPorNombre(nombre, idSede);
-            return ResponseEntity.ok(new ApiResponse(MESSAGE_SUCCESS, habitacionesResponse));
-        } catch (SedeNotFoundException | HabitacionNotFoundException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
-        }
-    }
-
-    @GetMapping("/sede/{idSede}/buscar-por-tipo-cama")
-    public ResponseEntity<ApiResponse> buscarHabitacionPorTipoCama(@RequestParam String cama,
-                                                                   @PathVariable Long idSede) {
-        try {
-            List<HabitacionDto> habitacionesResponse = habitacionService.buscarHabitacionPorTipoCama(cama, idSede);
-            return ResponseEntity.ok(new ApiResponse(MESSAGE_SUCCESS, habitacionesResponse));
-        } catch (SedeNotFoundException | HabitacionNotFoundException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
-        }
-    }
-
-    @GetMapping("/sede/{idSede}/buscar-por-tipo-habitacion")
-    public ResponseEntity<ApiResponse> buscarHabitacionPorTipoHabitacion(@RequestParam String habitacion,
-                                                                         @PathVariable Long idSede) {
-        try {
-            List<HabitacionDto> habitacionesResponse = habitacionService.buscarHabitacionPorTipoHabitacion(habitacion, idSede);
-            return ResponseEntity.ok(new ApiResponse(MESSAGE_SUCCESS, habitacionesResponse));
-        } catch (SedeNotFoundException | HabitacionNotFoundException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
-        }
-    }
-
-    //check
-    @GetMapping("/sede/{idSede}/buscar-por-precio")
-    public ResponseEntity<ApiResponse> buscarHabitacionPorPrecio(@RequestParam BigDecimal minPrecio,
-                                                                 @RequestParam(required = false, defaultValue = "1000") BigDecimal maxPrecio,
-                                                                 @PathVariable Long idSede) {
-        try {
-            List<HabitacionDto> habitacionesResponse = habitacionService.buscarHabitacionPorRangoPrecio(minPrecio, maxPrecio, idSede);
-            return ResponseEntity.ok(new ApiResponse(MESSAGE_SUCCESS, habitacionesResponse));
-        } catch (SedeNotFoundException | HabitacionNotFoundException e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
-        }
-    }
-
     @GetMapping("/sede/{idSede}/buscar")
     public ResponseEntity<ApiResponse> buscarHabitaciones(@RequestParam(required = false) String nombreHabitacion,
                                                           @RequestParam(required = false) String tipoCama,
@@ -109,6 +39,24 @@ public class HabitacionController {
                     nombreHabitacion, tipoCama, tipoHabitacion, minPrecio, maxPrecio, fechaEntrada, fechaSalida, idSede);
             return ResponseEntity.ok(new ApiResponse(MESSAGE_SUCCESS, habitacionesResponse));
         } catch (SedeNotFoundException | HabitacionNotFoundException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/sede/{idSede}/buscar-nombre")
+    public ResponseEntity<ApiResponse> buscarHabitacionesPorFiltroFechasYHoraYNombreCiudad(@RequestParam String nombreHabitacion,
+                                                                                           @PathVariable Long idSede) {
+        if (nombreHabitacion == null || nombreHabitacion.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse("Debe ingresar un nombre para poder realizar el filtro", null));
+        }
+
+        if (idSede == null || idSede < 0) {
+            return ResponseEntity.badRequest().body(new ApiResponse("Debe ingresar un id de sede y que sea mayor que 0 para poder realizar el filtro", null));
+        }
+
+        try {
+            return ResponseEntity.ok(new ApiResponse(MESSAGE_SUCCESS, habitacionService.buscarHabitacionesPorNombreYIdSede(nombreHabitacion, idSede)));
+        }catch (HabitacionNotFoundException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
         }
     }

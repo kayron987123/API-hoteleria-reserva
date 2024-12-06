@@ -91,6 +91,7 @@ public class AppConfiguration {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "reservas/crear").hasRole(RolUsuario.HUESPED.name())
                         .requestMatchers(HttpMethod.GET, "/habitaciones/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/sedes/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(daoAuthenticationProvider())

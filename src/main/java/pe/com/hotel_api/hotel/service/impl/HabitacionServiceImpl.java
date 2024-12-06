@@ -22,69 +22,6 @@ public class HabitacionServiceImpl implements HabitacionService {
     private final SedeRepository sedeRepository;
 
     @Override
-    public List<HabitacionDto> buscarHabitacionPorNombre(String nombre, Long idSede) {
-        validarSiExisteElIdDeLaSede(idSede);
-        List<Habitacion> habitaciones = habitacionRepository.findByNombreContainingIgnoreCaseAndSedeId(nombre, idSede);
-        if (habitaciones.isEmpty()) {
-            throw new HabitacionNotFoundException("No se encontraron habitaciones con el nombre: " + nombre);
-        }
-        return devolverListaHabitacionesDto(habitaciones);
-    }
-
-    @Override
-    public List<HabitacionDto> listarHabitacionPorSede(Long idSede) {
-        validarSiExisteElIdDeLaSede(idSede);
-        List<Habitacion> habitaciones = habitacionRepository.getHabitacionBySedeId(idSede);
-        if (habitaciones.isEmpty()) {
-            throw new HabitacionNotFoundException("No se encontraron habitaciones en la sede: " + idSede);
-        }
-
-        return devolverListaHabitacionesDto(habitaciones);
-    }
-
-    @Override
-    public List<HabitacionDto> buscarHabitacionPorTipoCama(String tipoCama, Long idSede) {
-        validarSiExisteElIdDeLaSede(idSede);
-        List<Habitacion> habitaciones = habitacionRepository.getHabitacionByTipoCamaNombreAndSedeId(tipoCama, idSede);
-        if (habitaciones.isEmpty()) {
-            throw new HabitacionNotFoundException("No se encontraron habitaciones con el tipo de cama: " + tipoCama);
-        }
-
-        return devolverListaHabitacionesDto(habitaciones);
-    }
-
-    @Override
-    public List<HabitacionDto> buscarHabitacionPorTipoHabitacion(String habitacion, Long idSede) {
-        validarSiExisteElIdDeLaSede(idSede);
-        List<Habitacion> habitaciones = habitacionRepository.getHabitacionByTipoHabitacionNombreAndSedeId(habitacion, idSede);
-        if (habitaciones.isEmpty()) {
-            throw new HabitacionNotFoundException("No se encontraron habitaciones con el tipo de habitacion: " + habitacion);
-        }
-
-        return devolverListaHabitacionesDto(habitaciones);
-    }
-
-    @Override
-    public List<HabitacionDto> buscarHabitacionPorRangoPrecio(BigDecimal minPrecio, BigDecimal maxPrecio, Long idSede) {
-        validarSiExisteElIdDeLaSede(idSede);
-        List<Habitacion> habitaciones = habitacionRepository.getHabitacionByRangoBetweenPrecioAndSedeId(minPrecio, maxPrecio, idSede);
-        if (habitaciones.isEmpty()) {
-            throw new HabitacionNotFoundException("No se encontraron habitaciones con el rango de precio: " + minPrecio + " - " + maxPrecio);
-        }
-        return devolverListaHabitacionesDto(habitaciones);
-    }
-
-    @Override
-    public List<HabitacionDto> buscarHabitacionPorFecha(LocalDateTime fechaEntrada, LocalDateTime fechaSalida, Long idSede) {
-        validarSiExisteElIdDeLaSede(idSede);
-        List<Habitacion> habitaciones = habitacionRepository.findAvailableRoomsByDatesAndSede(idSede, fechaEntrada, fechaSalida);
-        if (habitaciones.isEmpty()) {
-            throw new HabitacionNotFoundException("No se encontraron habitaciones disponibles en las fechas: " + fechaEntrada + " - " + fechaSalida);
-        }
-        return devolverListaHabitacionesDto(habitaciones);
-    }
-
-    @Override
     public List<HabitacionDto> buscarHabitaciones(String nombre, String tipoCama, String tipoHabitacion, BigDecimal minPrecio, BigDecimal maxPrecio, LocalDateTime fechaEntrada, LocalDateTime fechaSalida, Long idSede) {
         validarSiExisteElIdDeLaSede(idSede);
 
@@ -106,6 +43,16 @@ public class HabitacionServiceImpl implements HabitacionService {
         habitacionRepository.save(habitacion);
     }
 
+    @Override
+    public List<HabitacionDto> buscarHabitacionesPorNombreYIdSede(String nombreHabitacion, Long idSede) {
+        List<Habitacion> habitaciones = habitacionRepository.findByNombreContainingIgnoreCaseAndSedeIdAndEstado(nombreHabitacion, idSede, EstadoHabitacion.DISPONIBLE);
+        if (habitaciones.isEmpty()) {
+            throw new HabitacionNotFoundException("No se encontraron habitaciones con el nombre: " + nombreHabitacion);
+        }
+
+        return devolverListaHabitacionesDto(habitaciones);
+    }
+
     private List<HabitacionDto> devolverListaHabitacionesDto(List<Habitacion> habitaciones) {
         return habitaciones.stream()
                 .map(habitacion -> new HabitacionDto(
@@ -122,7 +69,7 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     private void validarSiExisteElIdDeLaSede(Long idSede) {
-        if (idSede == 0){
+        if (idSede == 0) {
             return;
         }
         if (!sedeRepository.existsById(idSede)) {

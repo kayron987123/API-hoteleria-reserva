@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.com.hotel_api.hotel.presentation.advice.AlreadyExistsException;
+import pe.com.hotel_api.hotel.presentation.advice.IllegalArgumentException;
 import pe.com.hotel_api.hotel.presentation.dto.*;
 import pe.com.hotel_api.hotel.service.interfaces.*;
 
