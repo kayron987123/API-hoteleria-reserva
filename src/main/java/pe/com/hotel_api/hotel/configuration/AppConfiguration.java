@@ -1,6 +1,9 @@
 package pe.com.hotel_api.hotel.configuration;
 
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import pe.com.hotel_api.hotel.configuration.security.AuthTokenFilter;
 import pe.com.hotel_api.hotel.configuration.security.JwtAuthEntryPoint;
@@ -27,8 +31,23 @@ import java.util.List;
 @EnableWebSecurity
 @Configuration
 public class AppConfiguration {
+    @Value("${azure.storage.connection.string}")
+    private String cadenaConexion;
+
     private final UsuarioDetailsService usuarioDetailsService;
     private final JwtAuthEntryPoint authEntryPoint;
+
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
+    }
+
+    @Bean
+    public BlobServiceClient blobServiceClient(){
+        return new BlobServiceClientBuilder()
+                .connectionString(cadenaConexion)
+                .buildClient();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){

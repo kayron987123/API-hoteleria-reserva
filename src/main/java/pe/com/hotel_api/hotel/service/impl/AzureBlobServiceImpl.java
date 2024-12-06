@@ -3,7 +3,7 @@ package pe.com.hotel_api.hotel.service.impl;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,16 +14,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AzureBlobServiceImpl implements AzureBlobService {
-
+    private final BlobServiceClient blobServiceClient;
     private static final List<String> VALID_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+    public static final long MAX_FILE_SIZE = (long) 5 * 1024 * 1024;
 
     @Value("${azure.storage.container.name}")
     private String nombreContenedor;
-
-    @Value("${azure.storage.connection.string}")
-    private String cadenaConexion;
 
     @Override
     public String cargarImagen(MultipartFile file) throws IOException {
@@ -38,10 +36,6 @@ public class AzureBlobServiceImpl implements AzureBlobService {
         if (file.getSize() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException("El archivo excede el tamaño máximo permitido");
         }
-
-        BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
-                .connectionString(cadenaConexion)
-                .buildClient();
 
         BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(nombreContenedor);
         String fileName = generateUniqueFileName(file.getOriginalFilename());

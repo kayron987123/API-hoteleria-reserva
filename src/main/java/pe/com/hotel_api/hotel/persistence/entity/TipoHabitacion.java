@@ -14,7 +14,7 @@ public class TipoHabitacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tipo_habitacion")
-    private Integer id;
+    private Long id;
 
     @Column(name = "nombre")
     private String nombre;

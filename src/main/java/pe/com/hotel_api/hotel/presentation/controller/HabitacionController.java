@@ -106,8 +106,7 @@ public class HabitacionController {
 
         try {
             List<HabitacionDto> habitacionesResponse = habitacionService.buscarHabitaciones(
-                    nombreHabitacion, tipoCama, tipoHabitacion, minPrecio, maxPrecio, fechaEntrada, fechaSalida, idSede
-            );
+                    nombreHabitacion, tipoCama, tipoHabitacion, minPrecio, maxPrecio, fechaEntrada, fechaSalida, idSede);
             return ResponseEntity.ok(new ApiResponse(MESSAGE_SUCCESS, habitacionesResponse));
         } catch (SedeNotFoundException | HabitacionNotFoundException e) {
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));

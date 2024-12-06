@@ -1,5 +1,6 @@
 package pe.com.hotel_api.hotel.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,11 +13,12 @@ import org.springframework.web.client.RestTemplate;
 import pe.com.hotel_api.hotel.service.interfaces.ApiDniService;
 
 @Service
+@RequiredArgsConstructor
 public class ApiDniServiceImpl implements ApiDniService {
-
     private static final String URL_REQUEST = "https://api.consultasperu.com/api/v1/query";
-    private static final String TOKEN_REQUEST_DNI = "49810a5bc8d331082461d84fa8aeea9d91e596700add0297730787a4a79614f6";
+    private static final String TOKEN_REQUEST_DNI = "015eaf4a8e509038c44b96b67bae1712d8ba3a65ac991e57b00fdbbdccd041cb";
     private static final String TYPE_DOCUMENT = "dni";
+    private final RestTemplate restTemplate;
 
     @Override
     public String enviarPeticionApiDni(String dni) throws HttpClientErrorException {
@@ -29,8 +31,6 @@ public class ApiDniServiceImpl implements ApiDniService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-
-        RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<String> response = restTemplate.postForEntity(URL_REQUEST, request, String.class);
         return response.getBody();

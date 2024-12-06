@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import pe.com.hotel_api.hotel.persistence.entity.Habitacion;
 import pe.com.hotel_api.hotel.persistence.enums.EstadoHabitacion;
 import pe.com.hotel_api.hotel.persistence.repository.HabitacionRepository;
-import pe.com.hotel_api.hotel.persistence.repository.ReservaRepository;
 import pe.com.hotel_api.hotel.persistence.repository.SedeRepository;
 import pe.com.hotel_api.hotel.presentation.advice.HabitacionNotFoundException;
 import pe.com.hotel_api.hotel.presentation.advice.SedeNotFoundException;
@@ -13,7 +12,6 @@ import pe.com.hotel_api.hotel.presentation.dto.HabitacionDto;
 import pe.com.hotel_api.hotel.service.interfaces.HabitacionService;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -124,6 +122,9 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     private void validarSiExisteElIdDeLaSede(Long idSede) {
+        if (idSede == 0){
+            return;
+        }
         if (!sedeRepository.existsById(idSede)) {
             throw new SedeNotFoundException("No se encontró la sede con el id: " + idSede);
         }

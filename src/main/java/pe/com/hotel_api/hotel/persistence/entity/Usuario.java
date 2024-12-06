@@ -52,11 +52,11 @@ public class Usuario{
     @Column(name = "distrito")
     private String distrito;
 
-    @Column(name = "rol", columnDefinition = "rol_usuario")
+    @Column(name = "rol")
     @Enumerated(EnumType.STRING)
     private RolUsuario rol;
 
-    @Column(name = "estado", columnDefinition = "estado_usuario")
+    @Column(name = "estado")
     @Enumerated(EnumType.STRING)
     private EstadoUsuario estado;
 

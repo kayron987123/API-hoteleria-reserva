@@ -77,7 +77,7 @@ public interface HabitacionRepository extends JpaRepository<Habitacion, Long> {
     @Query("""
                 SELECT h 
                 FROM Habitacion h
-                WHERE h.sede.id = :idSede
+                WHERE (:idSede = 0 OR h.sede.id = :idSede)
                   AND (:nombre IS NULL OR LOWER(h.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')))
                   AND (:tipoCama IS NULL OR LOWER(h.tipoCama.nombre) LIKE LOWER(CONCAT('%', :tipoCama, '%')))
                   AND (:tipoHabitacion IS NULL OR LOWER(h.tipoHabitacion.nombre) LIKE LOWER(CONCAT('%', :tipoHabitacion, '%')))
