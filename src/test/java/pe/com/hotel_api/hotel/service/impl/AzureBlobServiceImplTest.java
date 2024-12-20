@@ -5,13 +5,12 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.multipart.MultipartFile;
 import pe.com.hotel_api.hotel.presentation.advice.IllegalArgumentException;
 
 import java.io.IOException;
@@ -20,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class AzureBlobServiceImplTest {
 
     @Mock
@@ -36,10 +36,9 @@ class AzureBlobServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(azureBlobService, "nombreContenedor", "testcontainer");
-        when(blobServiceClient.getBlobContainerClient(anyString())).thenReturn(containerClient);
-        when(containerClient.getBlobClient(anyString())).thenReturn(blobClient);
+        lenient().when(blobServiceClient.getBlobContainerClient(anyString())).thenReturn(containerClient);
+        lenient().when(containerClient.getBlobClient(anyString())).thenReturn(blobClient);
     }
 
     @Test
@@ -71,9 +70,8 @@ class AzureBlobServiceImplTest {
                 "text/plain",
                 "Invalid file".getBytes()
         );
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            azureBlobService.cargarImagen(mockFile);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+            azureBlobService.cargarImagen(mockFile));
 
         assertEquals("El archivo no es una imagen valida", exception.getMessage());
     }
@@ -86,9 +84,8 @@ class AzureBlobServiceImplTest {
                 "image/jpeg",
                 new byte[0]
         );
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            azureBlobService.cargarImagen(mockFile);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+            azureBlobService.cargarImagen(mockFile));
 
         assertEquals("El archivo no puede estar vacío", exception.getMessage());
     }
@@ -101,9 +98,8 @@ class AzureBlobServiceImplTest {
                 "image/jpeg",
                 new byte[(int) (AzureBlobServiceImpl.MAX_FILE_SIZE + 1)]
         );
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            azureBlobService.cargarImagen(mockFile);
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+            azureBlobService.cargarImagen(mockFile));
 
         assertEquals("El archivo excede el tamaño máximo permitido", exception.getMessage());
     }

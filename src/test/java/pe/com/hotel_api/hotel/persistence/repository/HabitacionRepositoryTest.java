@@ -24,9 +24,8 @@ class HabitacionRepositoryTest {
 
     @BeforeAll
     static void setUp(@Autowired HabitacionRepository habitacionRepository) {
-        Habitacion habitacion = new Habitacion(null, "Habitacion imperial", new BigDecimal(12.50), 3, EstadoHabitacion.DISPONIBLE, "url.jpg", null, null, null);
+        Habitacion habitacion = new Habitacion(null, "Habitacion imperial", BigDecimal.valueOf(12.50), 3, EstadoHabitacion.DISPONIBLE, "url.jpg", null, null, null);
         habitacionRepository.save(habitacion);
-        log.info("Habitacion guardada con id: " + habitacion.getId());
     }
 
     @Test

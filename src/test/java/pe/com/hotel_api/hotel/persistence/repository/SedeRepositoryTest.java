@@ -1,6 +1,6 @@
 package pe.com.hotel_api.hotel.persistence.repository;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,8 @@ class SedeRepositoryTest {
     @Autowired
     private SedeRepository sedeRepository;
 
-    @BeforeAll
-    static void setUp(@Autowired SedeRepository sedeRepository) {
+    @BeforeEach
+    void setUp() {
         Sede sede = new Sede(null, "Sede 1", "Direccion 1", "arequipa", "Wiesse", null);
         sedeRepository.save(sede);
     }
@@ -40,7 +40,7 @@ class SedeRepositoryTest {
 
     @Test
     void existsById() {
-        boolean exists = sedeRepository.existsById(1L);
+        boolean exists = sedeRepository.existsById(2L);
         assertTrue(exists);
     }
 

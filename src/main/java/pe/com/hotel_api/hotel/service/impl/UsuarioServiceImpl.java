@@ -88,7 +88,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public boolean existeUsuarioByEmail(String email) {
         if (usuarioRepository.existsByEmail(email)) {
-            throw new AlreadyExistsException("El email" + email + " ya se encuentra registrado");
+            throw new AlreadyExistsException("El email " + email + " ya se encuentra registrado");
         }
         return false;
     }
@@ -96,7 +96,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public boolean existeUsuarioByDni(String dni) {
         if (usuarioRepository.existsByDni(dni)) {
-            throw new AlreadyExistsException("El dni" + dni + " ya se encuentra registrado");
+            throw new AlreadyExistsException("El dni " + dni + " ya se encuentra registrado");
         }
         return false;
     }

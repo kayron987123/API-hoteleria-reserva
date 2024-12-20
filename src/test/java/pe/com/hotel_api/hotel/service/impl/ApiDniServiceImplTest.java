@@ -1,10 +1,10 @@
 package pe.com.hotel_api.hotel.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,23 +14,19 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ApiDniServiceImplTest {
 
     @Mock
     private RestTemplate restTemplate;
 
     @InjectMocks
-    ApiDniServiceImpl apiDniService;
+    private ApiDniServiceImpl apiDniService;
 
     private static final String MOCK_RESPONSE = "{\"success\":true,\"message\":\"Successful response\",\"data\":{\"number\":\"76930830\"," +
             "\"full_name\":\"GAD JOSUE ALVA CASTROMONTE\",\"name\":\"GAD JOSUE\",\"surname\":\"ALVA CASTROMONTE\"," +
             "\"verification_code\":null,\"date_of_birth\":\"2002-01-02\",\"department\":\"LIMA\",\"province\":\"LIMA\"," +
             "\"district\":\"SAN JUAN DE LURIGANCHO\",\"address\":\"ASOC LOS PINOS MZ. K LT. 01\",\"ubigeo\":\"140137\"}}";
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void enviarPeticionApiDni() {

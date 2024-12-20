@@ -17,11 +17,7 @@ public class OtpServiceImpl implements OtpService {
     @Override
     public boolean esValidoOtp(String otp) {
         var usuario = redisTemplate.opsForValue().get(otp);
-
-        if (usuario != null){
-            return true;
-        }
-        return false;
+        return usuario != null;
     }
 
     @Override

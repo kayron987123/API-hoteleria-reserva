@@ -17,7 +17,7 @@ public class ConvertirDatosServiceImpl implements ConvertirDatosService {
         try {
             return objectMapper.readValue(json, clase);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al convertir el json :" + e.getMessage());
         }
     }
 }

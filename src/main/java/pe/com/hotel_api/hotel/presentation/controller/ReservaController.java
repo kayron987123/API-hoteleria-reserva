@@ -1,6 +1,10 @@
 package pe.com.hotel_api.hotel.presentation.controller;
 
 import com.google.zxing.WriterException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,22 +26,62 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/reservas")
 @RequiredArgsConstructor
+@Tag(name = "Do reservations", description = "Controller for Reservations")
 public class ReservaController {
     private final ReservaService reservaService;
     private final UsuarioService usuarioService;
     private final HabitacionService habitacionService;
 
+    @Operation(
+            summary = "Create Reservation",
+            description = "Create a reservation with the data of the reservation and the authenticated user",
+            tags = {"Do reservations"},
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Reservation request with the data of the reservation",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CrearReservaRequest.class)
+                    )
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "201",
+                            description = "Reservation created",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class)
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "400",
+                            description = "Bad request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class)
+                            )
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "409",
+                            description = "Conflict",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponse.class)
+                            )
+                    )
+            }
+    )
     @PostMapping("/crear")
     public ResponseEntity<ApiResponse> crearReserva(@RequestBody @Valid CrearReservaRequest crearReservaRequest){
         var usuarioAutenticado = usuarioService.obtenerUsuarioAutenticado();
 
         if (reservaService.verificarExcedeCantidadHuespedes(crearReservaRequest.cantidadHuespedes(), crearReservaRequest.habitacion())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("La cantidad de huespedes excede la capacidad de la habitación", null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("La cantidad de huespedes excede la capacidad de la habitacion", null));
         }
         try {
             var codeQr = reservaService.crearReserva(crearReservaRequest, usuarioAutenticado.email());
             habitacionService.actualizarEstado(crearReservaRequest.habitacion());
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("Reserva creada con éxito", codeQr));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse("Reserva creada con exito", codeQr));
         }catch (AlreadyExistsException | HabitacionNotFoundException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
         } catch (IOException e) {
@@ -46,4 +90,6 @@ public class ReservaController {
             return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), null));
         }
     }
+
+
 }

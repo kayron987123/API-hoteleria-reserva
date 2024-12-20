@@ -6,12 +6,12 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.google.zxing.WriterException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class CodigoQRServiceImplTest {
 
     @Mock
@@ -35,7 +36,6 @@ class CodigoQRServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(codigoQRService, "nombreContenedor", "testcontainer");
         when(blobServiceClient.getBlobContainerClient(anyString())).thenReturn(containerClient);
         when(containerClient.getBlobClient(anyString())).thenReturn(blobClient);

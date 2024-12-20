@@ -2,18 +2,21 @@ package pe.com.hotel_api.hotel.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Repository;
 import pe.com.hotel_api.hotel.persistence.entity.Sede;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Repository
 public interface SedeRepository extends JpaRepository<Sede, Long> {
-    Sede getSedeById(Long id);
-    boolean existsById(Long idSede);
+    Sede getSedeById(@NonNull Long id);
+    boolean existsById(@NonNull Long idSede);
 
     @Query("""
-                SELECT s 
-                FROM Sede s 
+                SELECT s
+                FROM Sede s
                 WHERE LOWER(s.ciudad) LIKE LOWER(CONCAT('%', :nombreCiudad, '%'))
                   AND NOT EXISTS (
                     SELECT r
