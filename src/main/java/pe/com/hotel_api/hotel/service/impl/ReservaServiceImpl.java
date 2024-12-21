@@ -3,6 +3,7 @@ package pe.com.hotel_api.hotel.service.impl;
 import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.com.hotel_api.hotel.persistence.entity.Reserva;
 import pe.com.hotel_api.hotel.persistence.enums.EstadoReserva;
 import pe.com.hotel_api.hotel.persistence.repository.HabitacionRepository;
@@ -27,7 +28,9 @@ public class ReservaServiceImpl implements ReservaService {
     private final HabitacionRepository habitacionRepository;
     private final CodigoQRService codigoQRService;
 
+
     @Override
+    @Transactional
     public String crearReserva(CrearReservaRequest crearReservaRequest, String email) throws IOException, WriterException {
 
         if (reservaRepository.existeReservaSolapada(crearReservaRequest.fechaEntrada(), crearReservaRequest.fechaSalida())) {

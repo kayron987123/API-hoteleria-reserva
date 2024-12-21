@@ -1,7 +1,10 @@
 package pe.com.hotel_api.hotel.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.com.hotel_api.hotel.persistence.entity.Habitacion;
 import pe.com.hotel_api.hotel.persistence.enums.EstadoHabitacion;
 import pe.com.hotel_api.hotel.persistence.repository.HabitacionRepository;
@@ -22,6 +25,7 @@ public class HabitacionServiceImpl implements HabitacionService {
     private final SedeRepository sedeRepository;
 
     @Override
+    @Cacheable(value = "listaHabitacionesCache8Parametros", key = "{#nombre, #tipoCama, #tipoHabitacion, #minPrecio, #maxPrecio, #fechaEntrada, #fechaSalida, #idSede}")
     public List<HabitacionDto> buscarHabitaciones(String nombre, String tipoCama, String tipoHabitacion, BigDecimal minPrecio, BigDecimal maxPrecio, LocalDateTime fechaEntrada, LocalDateTime fechaSalida, Long idSede) {
         validarSiExisteElIdDeLaSede(idSede);
 
@@ -36,6 +40,8 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = {"listaHabitacionesCache8Parametros", "listaHabitacionesCache2Parametros"}, allEntries = true)
     public void actualizarEstado(Long idHabitacion) {
         Habitacion habitacion = habitacionRepository.findById(idHabitacion)
                 .orElseThrow(() -> new HabitacionNotFoundException("No se encontró la habitación con el id: " + idHabitacion));
@@ -44,6 +50,7 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     @Override
+    @Cacheable(value = "listaHabitacionesCache2Parametros", key = "{#nombreHabitacion, #idSede}")
     public List<HabitacionDto> buscarHabitacionesPorNombreYIdSede(String nombreHabitacion, Long idSede) {
         List<Habitacion> habitaciones = habitacionRepository.findByNombreContainingIgnoreCaseAndSedeIdAndEstado(nombreHabitacion, idSede, EstadoHabitacion.DISPONIBLE);
         if (habitaciones.isEmpty()) {

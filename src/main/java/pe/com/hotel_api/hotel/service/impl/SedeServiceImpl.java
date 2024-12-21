@@ -1,6 +1,7 @@
 package pe.com.hotel_api.hotel.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import pe.com.hotel_api.hotel.persistence.entity.Sede;
 import pe.com.hotel_api.hotel.persistence.repository.SedeRepository;
@@ -11,7 +12,6 @@ import pe.com.hotel_api.hotel.service.interfaces.SedeService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +19,7 @@ public class SedeServiceImpl implements SedeService {
     private final SedeRepository sedeRepository;
 
     @Override
+    @Cacheable(value = "listaSedesCache", key = "{#fechaEntrada, #fechaSalida, #nombreCiudad}")
     public List<SedeDto> buscarSedePorFiltroDeFechasYHoraYNombre(LocalDateTime fechaEntrada, LocalDateTime fechaSalida, String nombreCiudad) {
         List<Sede> sedeResponse = sedeRepository.buscarSedePorFechaYHoraYNombreDondeHabitacionesNoEstenReservadas(fechaEntrada, fechaSalida, nombreCiudad);
         if (sedeResponse.isEmpty()){
@@ -41,7 +42,7 @@ public class SedeServiceImpl implements SedeService {
         if (fechaEntrada.isAfter(fechaSalida)) {
             throw new IllegalArgumentException("La fecha de entrada no puede ser posterior a la fecha de salida.");
         }
-        if (nombreCiudad.length() < 1 || nombreCiudad.length() > 20) {
+        if (nombreCiudad.isEmpty() || nombreCiudad.length() > 20) {
             throw new IllegalArgumentException("El nombre de la sede debe tener entre 1 y 20 caracteres.");
         }
     }
@@ -49,6 +50,6 @@ public class SedeServiceImpl implements SedeService {
     private List<SedeDto> devolverListaSedeDto(List<Sede> sedes) {
         return sedes.stream()
                 .map(sede -> new SedeDto(sede.getId(), sede.getNombre(), sede.getCiudad(), sede.getPais(), sede.getDireccion(), sede.getEstado().name()))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

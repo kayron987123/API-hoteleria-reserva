@@ -32,8 +32,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 usuarioEncontrado.getEmail());
     }
 
-    @Transactional
     @Override
+    @Transactional
     public UsuarioDto crearUsuario(UsuarioApiDniResponse usuarioApiDniResponse) {
 
         Usuario usuario = new Usuario();
@@ -59,8 +59,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 usuarioGuardado.getEmail());
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void correoVerificado(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email);
         usuario.setEmailVerificado(true);
@@ -87,7 +87,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public boolean existeUsuarioByEmail(String email) {
-        if (usuarioRepository.existsByEmail(email)) {
+        boolean exists = usuarioRepository.existsByEmail(email);
+        if (exists) {
             throw new AlreadyExistsException("El email " + email + " ya se encuentra registrado");
         }
         return false;
@@ -95,7 +96,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public boolean existeUsuarioByDni(String dni) {
-        if (usuarioRepository.existsByDni(dni)) {
+        boolean exists = usuarioRepository.existsByDni(dni);
+        if (exists) {
             throw new AlreadyExistsException("El dni " + dni + " ya se encuentra registrado");
         }
         return false;
