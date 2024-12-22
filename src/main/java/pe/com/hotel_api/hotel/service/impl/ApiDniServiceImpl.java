@@ -16,7 +16,7 @@ import pe.com.hotel_api.hotel.service.interfaces.ApiDniService;
 @RequiredArgsConstructor
 public class ApiDniServiceImpl implements ApiDniService {
     private static final String URL_REQUEST = "https://api.consultasperu.com/api/v1/query";
-    private static final String TOKEN_REQUEST_DNI = "015eaf4a8e509038c44b96b67bae1712d8ba3a65ac991e57b00fdbbdccd041ca";
+    private static final String TOKEN_REQUEST_DNI = "015eaf4a8e509038c44b96b67bae1712d8ba3a65ac991e57b00fdbbdccd041cb";
     private static final String TYPE_DOCUMENT = "dni";
     private final RestTemplate restTemplate;
 
